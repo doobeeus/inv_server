@@ -25,7 +25,7 @@ const registerUser = asyncHandler( async (req, res) => {
         throw new Error("Password must be over 6 characters");
     }
 
-    // check if user exists
+    // check if user already exists
     const userExists = await User.findOne({email});
 
     if (userExists) {
@@ -33,7 +33,6 @@ const registerUser = asyncHandler( async (req, res) => {
         throw new Error("Email is already registsred");
     }
     
-    // encrypt pw before saving to db
 
     // create new user
     const user = await User.create({
@@ -89,12 +88,27 @@ const loginUser = asyncHandler( async (req, res) => {
     // User exists, check password
     const passwordCorrect = await bcrypt.compare(password, user.password);
 
+    // Generate token
+    const token = generateToken(user._id);
+
+    if(passwordCorrect){
+        // Send HTTP-only cookie
+        res.cookie("token", token, {
+        path: "/",
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 86400), // 1 day
+        sameSite: "none", // back end and front end can have different URLs
+        secure: true // https
+    });
+    }
+
     if (user && passwordCorrect){
         const {_id, name, email} = user;
         res.status(200).json({
             _id,
             name,
-            email
+            email,
+            token
         });
     } else {
         res.status(400);
@@ -110,15 +124,33 @@ const logout = asyncHandler (async (req, res) => {
     res.cookie("token", "", {
         path: "/",
         httpOnly: true,
-        expires: new Date(0), 
+        expires: new Date(0), // setting the date to expire immediately
         sameSite: "none", // back end and front end can have different URLs
         secure: true // https
     });
     return res.status(200).json({ message: "Successfully logged out"});
 });
 
+// get User Data
+const getUser = asyncHandler(async (req,res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        const {_id, name, email} = user;
+        res.status(201).json({
+            _id,
+            name,
+            email
+        });
+    } else {
+        res.status(400)
+        throw new Error("Invalid user data");
+    }
+})
+
 module.exports = {
     registerUser,
     loginUser,
-    logout
+    logout,
+    getUser
 };
