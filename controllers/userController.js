@@ -20,7 +20,7 @@ const registerUser = asyncHandler( async (req, res) => {
         //console.log (req.body.name, req.body.email, req.body.password);
         throw new Error("Please fill in all required fields" );
     }
-    if (password.length < 6) {
+    else if (password.length < 6) {
         res.status(400);
         throw new Error("Password must be over 6 characters");
     }
@@ -30,7 +30,7 @@ const registerUser = asyncHandler( async (req, res) => {
 
     if (userExists) {
         res.status(400);
-        throw new Error("Email is already registsred");
+        throw new Error("Email is already registered");
     }
     
 
@@ -64,7 +64,7 @@ const registerUser = asyncHandler( async (req, res) => {
         });
     } else {
         res.status(400)
-        throw new Error("Invalid user data");
+        throw new Error("Invalid user data: ", res.status);
     }
 });
 
@@ -104,15 +104,20 @@ const loginUser = asyncHandler( async (req, res) => {
 
     if (user && passwordCorrect){
         const {_id, name, email} = user;
+        res.statusCode
         res.status(200).json({
             _id,
             name,
             email,
-            token
+            token,
+            status: 'success'
         });
+        console.log(res.status);
     } else {
-        res.status(400);
-        throw new Error("Invalid email or password");
+        res.status(400).json({
+            status: 'failure'
+        });
+        throw new Error("Invalid email or password: "), res.status;
     }
 });
 
