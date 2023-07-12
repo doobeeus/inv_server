@@ -4,12 +4,13 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const userRoute = require("./routes/userRoute");
+const clientRoute = require("./routes/clientRoute");
+const invRoute = require("./routes/invRoute");
 const errorHandler = require("./middleWare/errorMiddleware")
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const app = express();
-
 
 // middlewares
 
@@ -30,6 +31,8 @@ app.use(function(req, res, next) {
 
 // routes middleware
 app.use("/api/users", userRoute);
+app.use("/api/clients", clientRoute);
+app.use("/api/inventories", invRoute);
 
 // routes
 app.get("/", (req, res) => {

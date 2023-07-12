@@ -109,8 +109,7 @@ const loginUser = asyncHandler( async (req, res) => {
             _id,
             name,
             email,
-            token,
-            status: 'success'
+            token
         });
         console.log(res.status);
     } else {
