@@ -27,7 +27,7 @@ const registerUser = asyncHandler( async (req, res) => {
 
     // check if user already exists
     const userExists = await User.findOne({email});
-
+    console.log(userExists);
     if (userExists) {
         res.status(400);
         throw new Error("Email is already registered");
@@ -104,14 +104,12 @@ const loginUser = asyncHandler( async (req, res) => {
 
     if (user && passwordCorrect){
         const {_id, name, email} = user;
-        res.statusCode
         res.status(200).json({
             _id,
             name,
             email,
             token
         });
-        console.log(res.status);
     } else {
         res.status(400).json({
             status: 'failure'

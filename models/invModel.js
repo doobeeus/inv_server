@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 
 const invSchema = mongoose.Schema(
   {
-    clientName: {
-        type: String,
-        required: [true, "Please add a client name"]
-    },
-    buildingName: {
-        type: String,
-        required: [true, "Please add a building name"]
-    },
+    // clientName: {
+    //     type: String,
+    //     required: [true, "Please add a client name"]
+    // },
+    // buildingName: {
+    //     type: String,
+    //     required: [true, "Please add a building name"]
+    // },
     roomArea: {
       type: String,
       required: [true, "Please add room/area name"],

@@ -6,6 +6,10 @@ const clientSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add a company name"],
     },
+    buildingName: {
+      type: String,
+      required: [true, "Please add a building name"],
+    },
     address: {
       type: String,
       required: [true, "Please add an address"],
@@ -20,7 +24,7 @@ const clientSchema = mongoose.Schema(
         match: [/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
     "Please add a valid phone number"],
     },
-    email: {
+    contactEmail: {
         type: String,
         required: [true, "Please add an email"],
         unique: true,

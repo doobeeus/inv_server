@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const {
-    registerInventory,
+    createInventory,
 } = require("../controllers/invController");
 
-router.post("/register", registerInventory);
+router.post("/createInv", createInventory);
 
 module.exports = router;

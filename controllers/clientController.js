@@ -1,66 +1,91 @@
 const asyncHandler = require("express-async-handler");
 const Client = require("../models/clientModel");
 
+// create new client
 const registerClient = asyncHandler( async (req, res) => {
     
-    const {compName, address, contactName, phoneNum, email, hoursOp} = req.body;
+    const {compName, buildingName, address, contactName, phoneNum, contactEmail, hoursOp} = req.body;
 
     // validation
-    if (!compName || !address || !contactName || !phoneNum || !email || !hoursOp ) {
+    if (!compName || !buildingName || !address || !contactName || !phoneNum || !contactEmail || !hoursOp ) {
         res.status(400);
-        //console.log (req.body.name, req.body.email, req.body.password);
+        // console.log (req.body.name, req.body.email, req.body.password);
         throw new Error("Please fill in all required fields" );
-    }
+    }    
 
-    // check if client already exists
-    const compExists = await Client.findOne({email});
-
-    if (compExists) {
-        res.status(400);
-        throw new Error("Client is already registered");
-    }
-    
-
-    // create new user
+    // mongo create new document in client collection
     const client = await Client.create({
         compName, 
+        buildingName,
         address, 
         contactName, 
         phoneNum, 
-        email, 
+        contactEmail, 
         hoursOp
     });
+    console.log(client);
 
-    // generate Token
-    // const token = generateToken(user._id);
-
-    // Send HTTP-only cookie
-    // res.cookie("token", token, {
-    //     path: "/",
-    //     httpOnly: true,
-    //     expires: new Date(Date.now() + 1000 * 86400), // 1 day
-    //     sameSite: "none", // back end and front end can have different URLs
-    //     secure: true // https
-    // });
-
-    
     if (client) {
-        const {_id, compName, address, contactName, phoneNum, email, hoursOp} = client;
+        const {_id, compName, address, contactName, phoneNum, contactEmail, hoursOp} = client;
         res.status(201).json({
             _id,
             compName, 
+            buildingName,
             address, 
             contactName, 
             phoneNum, 
-            email, 
+            contactEmail, 
+            hoursOp
+        });
+        console.log(client);
+    } else {
+        res.status(400)
+        throw new Error("Invalid client data: ", res.status);
+    }
+});
+
+// return single client info
+// going to be used to link inventories to clients
+const getSingleClient = asyncHandler(async (req,res) => {
+    const {id }= req.body;
+
+    const client = await Client.findById(req.body.id);
+    console.log(client);
+    if (client) {
+        const {
+            _id,
+            compName, 
+            buildingName,
+            address, 
+            contactName, 
+            phoneNum, 
+            contactEmail, 
+            hoursOp} = client;
+        res.status(201).json({
+            _id,
+            compName, 
+            buildingName,
+            address, 
+            contactName, 
+            phoneNum, 
+            contactEmail, 
             hoursOp
         });
     } else {
         res.status(400)
-        throw new Error("Invalid user data: ", res.status);
+        throw new Error("Invalid client data");
     }
+});
+
+// return all client info
+const getAllClientInfo = asyncHandler(async (req,res) => {
+    const client = await Client.find(); // {} finds all 
+    res.json(client);
+
 });
 
 module.exports = {
     registerClient,
+    getSingleClient,
+    getAllClientInfo
 };
