@@ -79,7 +79,7 @@ const getSingleClient = asyncHandler(async (req,res) => {
 
 // return all client info
 const getAllClientInfo = asyncHandler(async (req,res) => {
-    const client = await Client.find(); // {} finds all 
+    const client = await Client.find();
     res.json(client);
 
 });
