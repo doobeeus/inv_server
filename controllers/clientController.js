@@ -4,10 +4,10 @@ const Client = require("../models/clientModel");
 // create new client
 const registerClient = asyncHandler( async (req, res) => {
     
-    const {compName, buildingName, address, contactName, phoneNum, contactEmail, hoursOp} = req.body;
+    const {clientName, buildingName, address, contactName, phoneNum, contactEmail, hoursOp} = req.body;
 
     // validation
-    if (!compName || !buildingName || !address || !contactName || !phoneNum || !contactEmail || !hoursOp ) {
+    if (!clientName || !buildingName || !address || !contactName || !phoneNum || !contactEmail || !hoursOp ) {
         res.status(400);
         // console.log (req.body.name, req.body.email, req.body.password);
         throw new Error("Please fill in all required fields" );
@@ -15,7 +15,7 @@ const registerClient = asyncHandler( async (req, res) => {
 
     // mongo create new document in client collection
     const client = await Client.create({
-        compName, 
+        clientName, 
         buildingName,
         address, 
         contactName, 
@@ -26,10 +26,10 @@ const registerClient = asyncHandler( async (req, res) => {
     console.log(client);
 
     if (client) {
-        const {_id, compName, address, contactName, phoneNum, contactEmail, hoursOp} = client;
+        const {_id, clientName, address, contactName, phoneNum, contactEmail, hoursOp} = client;
         res.status(201).json({
             _id,
-            compName, 
+            clientName, 
             buildingName,
             address, 
             contactName, 
@@ -54,7 +54,7 @@ const getSingleClient = asyncHandler(async (req,res) => {
     if (client) {
         const {
             _id,
-            compName, 
+            clientName, 
             buildingName,
             address, 
             contactName, 
@@ -63,7 +63,7 @@ const getSingleClient = asyncHandler(async (req,res) => {
             hoursOp} = client;
         res.status(201).json({
             _id,
-            compName, 
+            clientName, 
             buildingName,
             address, 
             contactName, 

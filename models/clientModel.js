@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const clientSchema = mongoose.Schema(
   {
-    compName: {
+    clientName: {
       type: String,
       required: [true, "Please add a company name"],
     },
