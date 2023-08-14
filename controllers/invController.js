@@ -42,7 +42,44 @@ const createInventory = asyncHandler( async (req, res) => {
         throw new Error("Invalid inventory data: ", res.status);
     }
 });
+// return all client info
+const getAllInventory = asyncHandler(async (req,res) => {
+    try{
+    const inv = await invList.find();
+    return res.json(inv);
+    }
+    catch(error){
+        console.log(error);
+    }
+
+});
+
+// query inventory by clientname, buildingname
+const queryInventory = asyncHandler( async (req, res) => {
+    const {clientName, buildingName} = req.body;
+
+    // validation
+    if (!clientName || !buildingName) {
+        res.status(400);
+    throw new Error("Please add client name and/or building name.");
+    }
+
+    // check if inventory exists
+    try{
+    const inv = await invList.find({clientName: clientName, buildingName: buildingName });
+    if (!inv.length){
+        res.status(400);
+    throw new Error("Inventory not found");
+    }
+        return res.json(inv);
+    }
+    catch(error){
+        console.log(error);
+    }
+});
 
 module.exports = {
     createInventory,
+    getAllInventory,
+    queryInventory
 };
