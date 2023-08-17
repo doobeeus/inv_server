@@ -69,7 +69,7 @@ const queryInventory = asyncHandler( async (req, res) => {
     const inv = await invList.find({clientName: clientName, buildingName: buildingName });
     if (!inv.length){
         res.status(400);
-    throw new Error("Inventory not found");
+        throw new Error("Inventory not found");
     }
         return res.json(inv);
     }
