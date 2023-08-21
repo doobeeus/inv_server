@@ -42,7 +42,7 @@ const createInventory = asyncHandler( async (req, res) => {
         throw new Error("Invalid inventory data: ", res.status);
     }
 });
-// return all client info
+// return all inv info
 const getAllInventory = asyncHandler(async (req,res) => {
     try{
     const inv = await invList.find();
@@ -52,6 +52,18 @@ const getAllInventory = asyncHandler(async (req,res) => {
         console.log(error);
     }
 
+});
+
+// get inv by id
+const getOneInventory = asyncHandler(async (req,res) => {
+    try{
+        const {_id} = req.body;
+        const inv = await invList.find({_id: _id});
+        return res.json(inv);
+    }
+    catch(e){
+        console.log(e);
+    }
 });
 
 // query inventory by clientname, buildingname
@@ -78,8 +90,45 @@ const queryInventory = asyncHandler( async (req, res) => {
     }
 });
 
+const deleteInventory = asyncHandler(async (req,res) => {
+    const {_id} = req.body;
+    try {
+        const inv = await invList.deleteOne({_id: _id})
+        return res.json(inv);
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+const editInventory = asyncHandler(async (req,res) => {
+    const {_id, clientName, buildingName, roomArea, fixtureType, lampType, numLamps, numFixtures, lampWattage} = req.body;
+    try{
+        const inv = await invList.updateOne({_id : _id},
+            {$set: {
+                clientName: clientName, 
+                buildingName: buildingName, 
+                roomArea: roomArea, 
+                fixtureType: fixtureType, 
+                lampType: lampType, 
+                numLamps: numLamps, 
+                numFixtures: numFixtures, 
+                lampWattage: lampWattage
+            },
+            $currentDate: { lastUpdated: true }
+        })
+        return res.json(inv);
+
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
 module.exports = {
     createInventory,
     getAllInventory,
-    queryInventory
+    getOneInventory,
+    queryInventory,
+    deleteInventory,
+    editInventory
 };
