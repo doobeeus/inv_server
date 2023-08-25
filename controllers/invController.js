@@ -58,7 +58,7 @@ const getAllInventory = asyncHandler(async (req,res) => {
 const getOneInventory = asyncHandler(async (req,res) => {
     try{
         const {_id} = req.body;
-        const inv = await invList.find({_id: _id});
+        const inv = await invList.findById({_id: _id});
         return res.json(inv);
     }
     catch(e){

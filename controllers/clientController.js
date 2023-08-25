@@ -47,45 +47,100 @@ const registerClient = asyncHandler( async (req, res) => {
 // return single client info
 // going to be used to link inventories to clients
 const getSingleClient = asyncHandler(async (req,res) => {
-    const {id }= req.body;
-
-    const client = await Client.findById(req.body.id);
-    console.log(client);
-    if (client) {
-        const {
-            _id,
-            clientName, 
-            buildingName,
-            address, 
-            contactName, 
-            phoneNum, 
-            contactEmail, 
-            hoursOp} = client;
-        res.status(201).json({
-            _id,
-            clientName, 
-            buildingName,
-            address, 
-            contactName, 
-            phoneNum, 
-            contactEmail, 
-            hoursOp
-        });
-    } else {
-        res.status(400)
-        throw new Error("Invalid client data");
+    try{
+        const {_id} = req.body;
+        const client = await Client.findById({_id: _id});
+        return res.json(client);
+    }
+    catch(e){
+        console.log(e);
     }
 });
 
 // return all client info
 const getAllClientInfo = asyncHandler(async (req,res) => {
-    const client = await Client.find();
-    res.json(client);
+    try{
+    const clientData = await Client.find();
+    return res.json(clientData);
+    }
+    catch(error){
+        console.log(error);
+    }
 
+});
+
+// query client
+const queryClient = asyncHandler( async (req, res) => {
+    const {clientName} = req.body;
+
+    // validation
+    if (!clientName) {
+        res.status(400);
+    throw new Error("Please add client name.");
+    }
+
+    // check if inventory exists
+    try{
+    const clientData = await Client.find({clientName: clientName });
+    if (!clientData.length){
+        res.status(400);
+        throw new Error("Client not found");
+    }
+        return res.json(clientData);
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+// delete client by id
+const deleteClient = asyncHandler(async (req,res) => {
+    const {_id} = req.body;
+    try {
+        const clientData = await Client.deleteOne({_id: _id})
+        return res.json(clientData);
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+// edit client by id
+const editClient = asyncHandler(async (req,res) => {
+    const { _id,
+        clientName, 
+        buildingName,
+        address, 
+        contactName, 
+        phoneNum, 
+        contactEmail, 
+        hoursOp} = req.body;
+    try{
+        const clientData = await Client.updateOne({_id : _id},
+            {$set: {
+                clientName: clientName, 
+                buildingName: buildingName,
+                address: address, 
+                contactName: contactName, 
+                phoneNum: phoneNum, 
+                contactEmail: contactEmail, 
+                hoursOp: hoursOp
+            },
+            $currentDate: { lastUpdated: true }
+        })
+        return res.json(clientData);
+
+    }
+    catch(error){
+        console.log(error);
+    }
 });
 
 module.exports = {
     registerClient,
     getSingleClient,
-    getAllClientInfo
+    getAllClientInfo,
+    editClient,
+    deleteClient,
+    queryClient
 };
