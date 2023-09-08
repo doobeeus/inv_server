@@ -98,7 +98,8 @@ const loginUser = asyncHandler( async (req, res) => {
         expires: new Date(Date.now() + 1000 * 86400), // 1 day
         sameSite: "none", // back end and front end can have different URLs
         secure: true // https
-    });
+    }
+    );
     }
 
     if (user && passwordCorrect){
@@ -147,11 +148,27 @@ const getUser = asyncHandler(async (req,res) => {
         res.status(400)
         throw new Error("Invalid user data");
     }
-})
+});
+
+const loginStatus = asyncHandler(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.json(false);
+    }
+    // Verify Token
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    if (!verified) {
+      return res.json(false);
+    }
+    else{
+        return res.json(true);
+    }
+  });
 
 module.exports = {
     registerUser,
     loginUser,
     logout,
-    getUser
+    getUser,
+    loginStatus
 };
