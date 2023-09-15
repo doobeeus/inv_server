@@ -3,12 +3,9 @@ const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-
-
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
-
 
 const registerUser = asyncHandler( async (req, res) => {
     const {name, email, password} = req.body;
@@ -31,7 +28,6 @@ const registerUser = asyncHandler( async (req, res) => {
         res.status(400);
         throw new Error("Email is already registered");
     }
-    
 
     // create new user
     const user = await User.create({
@@ -51,14 +47,14 @@ const registerUser = asyncHandler( async (req, res) => {
         sameSite: "none", // back end and front end can have different URLs
         secure: true // https
     });
-
-    
+  
     if (user) {
-        const {_id, name, email} = user;
+        const {_id, name, email, userRole} = user;
         res.status(201).json({
             _id,
             name,
             email,
+            userRole,
             token
         });
     } else {
@@ -103,11 +99,12 @@ const loginUser = asyncHandler( async (req, res) => {
     }
 
     if (user && passwordCorrect){
-        const {_id, name, email} = user;
+        const {_id, name, email, userRole} = user;
         res.status(200).json({
             _id,
             name,
             email,
+            userRole,
             token
         });
     } else {
@@ -117,7 +114,6 @@ const loginUser = asyncHandler( async (req, res) => {
         throw new Error("Invalid email or password: "), res.status;
     }
 });
-
 
 // logout user
 const logout = asyncHandler (async (req, res) => {
@@ -138,11 +134,12 @@ const getUser = asyncHandler(async (req,res) => {
     const user = await User.findById(req.user._id);
 
     if (user) {
-        const {_id, name, email} = user;
+        const {_id, name, email, userRole} = user;
         res.status(201).json({
             _id,
             name,
-            email
+            email,
+            userRole
         });
     } else {
         res.status(400)
@@ -158,7 +155,9 @@ const loginStatus = asyncHandler(async (req, res) => {
     // Verify Token
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     if (!verified) {
-      return res.json(false);
+        // never reaches here, tried putting dummy token but console never logs, json never returns unless it's actually verified?
+        // therefore the redirect never works.... might be better to use a state instead and just change state on login?
+       return res.json(false);
     }
     else{
         return res.json(true);

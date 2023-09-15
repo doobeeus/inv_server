@@ -10,14 +10,13 @@ const {
 } = require("../controllers/clientController");
 
 const protect = require("../middleWare/authMiddleware");
+const admin = require("../middleWare/adminMiddleware");
 
 router.post("/registerclient", protect, registerClient);
 router.post("/getsingleclient", protect, getSingleClient);
 router.get("/getAllClientInfo", protect, getAllClientInfo);
-router.post("/editclient", protect, editClient);
-router.post("/deleteclient", protect, deleteClient);
+router.post("/editclient", admin, editClient);
+router.post("/deleteclient", admin, deleteClient);
 router.post("/queryclient", protect, queryClient);
-
-
 
 module.exports = router;
